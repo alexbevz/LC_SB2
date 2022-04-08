@@ -1,4 +1,4 @@
-package ru.bevz.LC_SB2;
+package ru.bevz.LC_SB2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +48,7 @@ public class GreetingController {
         Iterable<Message> messages;
 
         if (!filter.isEmpty()) {
-             messages = messageRepo.findByTag(filter);
+            messages = messageRepo.findByTag(filter);
         } else {
             messages = messageRepo.findAll();
         }

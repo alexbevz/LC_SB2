@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @RequiredArgsConstructor
 public class Message {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String text;
