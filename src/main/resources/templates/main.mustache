@@ -1,27 +1,35 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Main</title>
+    <title>Main Page</title>
 </head>
-
 <body>
-<div>
-    <form method="post">
-        <input type="text" name="text" placeholder="Type message">
-        <input type="text" name="tag" placeholder="Tag">
-        <button type="submit">Send</button>
+    <div>
+        <form action="/logout" method="post">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </div>
+    <div>
+        <form method="post">
+            <input type="text" name="text" placeholder="Type a message" />
+            <input type="text" name="tag" placeholder="Tag">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+            <button type="submit">Add</button>
+        </form>
+    </div>
+    <div>The list of messages</div>
+    <form method="post" action="filter">
+        <input type="text" name="filter">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+        <button type="submit">Find</button>
     </form>
-</div>
-<div>The list of messages</div>
-<form method="post" action="filter">
-    <input type="text" name="filter">
-    <button type="submit">Find</button>
-</form>
-{{#messages}}
+    {{#messages}}
     <div>
         <b>{{id}}</b>
         <span>{{text}}</span>
         <i>{{tag}}</i>
     </div>
-{{/messages}}
+    {{/messages}}
 </body>
 </html>

@@ -6,5 +6,7 @@ import ru.bevz.LC_SB2.domain.Message;
 import java.util.List;
 
 public interface MessageRepo extends CrudRepository<Message, Long> {
+
     List<Message> findByTag(String tag);
+
 }
