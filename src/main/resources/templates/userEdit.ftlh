@@ -10,10 +10,8 @@
         <label>
             Role(s):
             <#list roles as role>
-                <input
-                        name="${role}"
-                        type="checkbox" ${user.roles?seq_contains(role)?string("checked", "")}
-                />
+                <input name="${role}"
+                       type="checkbox" ${user.roles?seq_contains(role)?string("checked", "")}/>
                 ${role}
             </#list>
         </label>
