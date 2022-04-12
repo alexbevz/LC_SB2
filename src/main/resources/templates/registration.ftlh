@@ -2,8 +2,6 @@
 <#import "parts/login.ftlh" as l>
 
 <@c.page>
-    Add New User
     ${message!""}
-    <@l.registration/>
-    <a href="/login">Log In</a>
+    <@l.login "/registration" true />
 </@c.page>

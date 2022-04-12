@@ -2,7 +2,5 @@
 <#import "parts/login.ftlh" as l>
 
 <@c.page>
-Login Page
-<@l.login/>
-<a href="/registration">Sign Up</a>
+<@l.login "/login" false />
 </@c.page>
