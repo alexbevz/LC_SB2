@@ -7,12 +7,15 @@
         <span><a href="/user">List of users</a></span>
     </div>
     <div>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <label>
                 <input type="text" name="text" placeholder="Type a message"/>
             </label>
             <label>
                 <input type="text" name="tag" placeholder="Tag">
+            </label>
+            <label>
+                <input type="file" name="file" placeholder="File">
             </label>
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <button type="submit">Add</button>
@@ -21,7 +24,7 @@
     <div>The list of messages</div>
     <form method="get" action="/main">
         <label>
-            <input type="text" name="filter" value="${filter}">
+            <input type="text" name="filter" value="${filter!""}">
         </label>
         <button type="submit">Find</button>
     </form>
@@ -31,6 +34,11 @@
             <span>${message.text}</span>
             <i>${message.tag}</i>
             <strong>${message.authorName}</strong>
+            <div>
+                <#if message.filename??>
+                    <img src="/img/${message.filename}" width="200px">
+                </#if>
+            </div>
         </div>
     <#else>
         No messages
