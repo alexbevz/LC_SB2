@@ -9,6 +9,13 @@
             <input class="form-control" type="password" name="password" placeholder="Password"/>
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+        <#if isRegisterForm>
+            <div class="mb-3 sb-3">
+                <label class="form-label">Email:</label>
+                <input class="form-control" type="email" name="email" placeholder="name@domain.com"/>
+            </div>
+        </#if>
+
         <div>
             <#if !isRegisterForm>
                 <div>
