@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
             return false;
         }
 
-        user.setActive(true);
+        user.setActive(false);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
         userRepo.save(user);
@@ -44,7 +44,8 @@ public class UserService implements UserDetailsService {
             String message = "Hello, " + user.getUsername() + "! Your code activation: " + user.getActivationCode()
                     + "\n Or you may visit the next link: http://localhost:8080/activate/" + user.getActivationCode()
                     + "\n Thanks for attention!";
-            emailSenderService.send(user.getEmail(), "Activation code", message);
+            Thread thread = new Thread(() -> emailSenderService.send(user.getEmail(), "Activation code", message));
+            thread.start();
         }
 
         return true;
@@ -58,6 +59,7 @@ public class UserService implements UserDetailsService {
         }
 
         user.setActivationCode(null);
+        user.setActive(true);
         userRepo.save(user);
 
         return true;
