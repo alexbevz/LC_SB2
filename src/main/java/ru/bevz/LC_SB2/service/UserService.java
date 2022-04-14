@@ -1,15 +1,17 @@
 package ru.bevz.LC_SB2.service;
 
+import freemarker.template.utility.StringUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.bevz.LC_SB2.domain.Role;
 import ru.bevz.LC_SB2.domain.User;
 import ru.bevz.LC_SB2.repos.UserRepo;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -40,6 +42,12 @@ public class UserService implements UserDetailsService {
         user.setActivationCode(UUID.randomUUID().toString());
         userRepo.save(user);
 
+        sendMessage(user);
+
+        return true;
+    }
+
+    private void sendMessage(User user) {
         if (!user.getEmail().isBlank() && !user.getEmail().isEmpty()) {
             String message = "Hello, " + user.getUsername() + "! Your code activation: " + user.getActivationCode()
                     + "\n Or you may visit the next link: http://localhost:8080/activate/" + user.getActivationCode()
@@ -47,8 +55,6 @@ public class UserService implements UserDetailsService {
             Thread thread = new Thread(() -> emailSenderService.send(user.getEmail(), "Activation code", message));
             thread.start();
         }
-
-        return true;
     }
 
     public boolean activateUser(String code) {
@@ -63,5 +69,52 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
 
         return true;
+    }
+
+    public List<User> findAll() {
+        return userRepo.findAll();
+    }
+
+    public void saveUser(User user, String username, Map<String, String> form) {
+        user.setUsername(username);
+
+        Set<String> roles = Arrays.stream(Role.values())
+                .map(Role::name)
+                .collect(Collectors.toSet());
+
+        user.getRoles().clear();
+
+        for (String key : form.keySet()) {
+            if (roles.contains(key)) {
+                user.getRoles().add(Role.valueOf(key));
+            }
+        }
+
+        userRepo.save(user);
+    }
+
+    public void updateProfile(User user, String password, String email) {
+        String userEmail = user.getEmail();
+        boolean isEmailChanged = (email != null && !email.equals(userEmail)) ||
+                (userEmail != null && !userEmail.equals(email));
+
+        if (isEmailChanged) {
+            user.setEmail(email);
+
+            if (!email.isEmpty() && !email.isBlank()) {
+                user.setActivationCode(UUID.randomUUID().toString());
+            }
+        }
+
+        if (!password.isEmpty() && !password.isBlank()) {
+            user.setPassword(password);
+        }
+
+        userRepo.save(user);
+
+        if (isEmailChanged) {
+            sendMessage(user);
+        }
+
     }
 }
