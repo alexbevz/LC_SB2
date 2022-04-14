@@ -28,7 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             "/",
                             "/registration",
                             "/activate/*",
-                            "/static/**"
+                            "/static/**",
+                            "/error"
 
                     ).permitAll()
                     .anyRequest().authenticated()
