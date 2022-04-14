@@ -1,6 +1,8 @@
 package ru.bevz.LC_SB2.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Message {
@@ -8,7 +10,10 @@ public class Message {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "please fill the message")
+    @Size(max = 2048, message = "a message too long (more than 2048)")
     private String text;
+    @Size(max = 256, message = "a tag too long (more than 256)")
     private String tag;
 
     @ManyToOne(fetch = FetchType.EAGER)

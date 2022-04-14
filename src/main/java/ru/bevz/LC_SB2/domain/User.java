@@ -4,6 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Collection;
 import java.util.Set;
 
@@ -13,10 +16,23 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank(message = "username can not be empty")
     private String username;
+    @NotBlank(message = "password can not be empty")
+//    @Pattern(
+//            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$",
+//            message = "password is invalid\n" +
+//                    "(must be at least one upper case, one lower case, one numeric digit, 8 chars and no more 16 chars)"
+//    )
     private String password;
+
+    @Transient
+    private String confirmPassword;
+
     private boolean active;
 
+    @NotBlank(message = "email can not be empty")
+    @Email(message = "email is not correct")
     private String email;
     private String activationCode;
 
@@ -108,5 +124,13 @@ public class User implements UserDetails {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

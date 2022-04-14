@@ -28,11 +28,14 @@
                 </#if>
             </ul>
 
-            <div class="navbar-text me-3">
-                ${name}
-            </div>
             <#if known>
+                <div class="navbar-text me-3">
+                    ${name}
+                </div>
                 <@l.logout/>
+            <#else>
+                <a class="btn btn-primary me-3" href="/login" type="submit">Log In</a>
+                <a class="btn btn-primary me-3" href="/registration" type="submit">Sign Up</a>
             </#if>
         </div>
     </div>

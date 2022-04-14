@@ -1,15 +1,15 @@
 package ru.bevz.LC_SB2.service;
 
-import freemarker.template.utility.StringUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import ru.bevz.LC_SB2.domain.Role;
 import ru.bevz.LC_SB2.domain.User;
 import ru.bevz.LC_SB2.repos.UserRepo;
 
+import javax.persistence.EntityExistsException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,34 +17,38 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
-
     private final EmailSenderService emailSenderService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepo userRepo, EmailSenderService emailSenderService) {
+    public UserService(UserRepo userRepo, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.emailSenderService = emailSenderService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepo.findByUsername(username);
+        User byUsername = userRepo.findByUsername(username);
+
+        if (byUsername == null) {
+            throw new UsernameNotFoundException("User already exists");
+        }
+
+        return byUsername;
     }
 
-    public boolean addUser(User user) {
-        User userFromDb = userRepo.findByUsername(user.getUsername());
-
-        if (userFromDb != null) {
-            return false;
+    public void addUser(User user) {
+        if (userRepo.findByUsername(user.getUsername()) != null) {
+            throw new EntityExistsException("user already exists");
         }
 
         user.setActive(false);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
 
         sendMessage(user);
-
-        return true;
     }
 
     private void sendMessage(User user) {
@@ -107,7 +111,7 @@ public class UserService implements UserDetailsService {
         }
 
         if (!password.isEmpty() && !password.isBlank()) {
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
         }
 
         userRepo.save(user);
@@ -116,5 +120,13 @@ public class UserService implements UserDetailsService {
             sendMessage(user);
         }
 
+    }
+
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
+
+    public User findByUsername(String username) {
+        return userRepo.findByUsername(username);
     }
 }

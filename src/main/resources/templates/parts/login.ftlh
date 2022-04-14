@@ -1,18 +1,56 @@
 <#macro login path isRegisterForm>
     <form class="col-4" action="${path}" method="post">
         <div class="mb-3">
-            <label class="form-label">User Name:</label>
-            <input class="form-control" type="text" name="username" placeholder="User name"/>
+            <label class="form-label">User name:</label>
+            <input class="form-control ${usernameError???string('is-invalid', '')}"
+                   name="username"
+                   placeholder="User name"
+                   type="text"
+                   value="<#if user??>${user.username}</#if>"/>
+            <#if usernameError??>
+                <div class="invalid-feedback">
+                    ${usernameError}
+                </div>
+            </#if>
         </div>
         <div class="mb-3 sb-3">
             <label class="form-label">Password:</label>
-            <input class="form-control" type="password" name="password" placeholder="Password"/>
+            <input class="form-control ${passwordError???string('is-invalid', '')}"
+                   name="password"
+                   placeholder="Password"
+                   type="password"/>
+            <#if passwordError??>
+                <div class="invalid-feedback">
+                    ${passwordError}
+                </div>
+            </#if>
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
         <#if isRegisterForm>
             <div class="mb-3 sb-3">
+                <label class="form-label">Confirm password:</label>
+                <input class="form-control ${confirmPasswordError???string('is-invalid', '')}"
+                       name="confirmPassword"
+                       placeholder="Confirm password"
+                       type="password"/>
+                <#if confirmPasswordError??>
+                    <div class="invalid-feedback">
+                        ${confirmPasswordError}
+                    </div>
+                </#if>
+            </div>
+            <div class="mb-3 sb-3">
                 <label class="form-label">Email:</label>
-                <input class="form-control" type="email" name="email" placeholder="name@domain.com"/>
+                <input class="form-control ${emailError???string('is-invalid', '')}"
+                       name="email"
+                       placeholder="name@domain.com"
+                       type="email"
+                       value="<#if user??>${user.email}</#if>"/>
+                <#if emailError??>
+                    <div class="invalid-feedback">
+                        ${emailError}
+                    </div>
+                </#if>
             </div>
         </#if>
 
