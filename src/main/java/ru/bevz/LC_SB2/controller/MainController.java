@@ -14,25 +14,21 @@ import ru.bevz.LC_SB2.domain.User;
 import ru.bevz.LC_SB2.repos.MessageRepo;
 
 import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.AccessException;
-import java.util.Objects;
 import java.util.UUID;
 
 @Controller
 public class MainController {
 
     private final MessageRepo messageRepo;
+    @Value("${upload.path}")
+    private String uploadPath;
 
     public MainController(MessageRepo messageRepo) {
         this.messageRepo = messageRepo;
     }
-
-    @Value("${upload.path}")
-    private String uploadPath;
 
     @GetMapping("/")
     public String greeting() {

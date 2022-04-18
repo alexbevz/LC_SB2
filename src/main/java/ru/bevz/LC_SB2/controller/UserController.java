@@ -65,7 +65,7 @@ public class UserController {
             @AuthenticationPrincipal User user,
             @RequestParam String password,
             @RequestParam String email
-            ) {
+    ) {
 
         userService.updateProfile(user, password, email);
 

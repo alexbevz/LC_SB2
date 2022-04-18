@@ -28,14 +28,14 @@ public class RegistrationController {
     @Value("${recaptcha.html}")
     private String recaptchaHtml;
 
-    @ModelAttribute(name = "recaptchaKey")
-    private String getRecaptchaHtml() {
-        return recaptchaHtml;
-    }
-
     public RegistrationController(UserService userService, RestTemplate restTemplate) {
         this.userService = userService;
         this.restTemplate = restTemplate;
+    }
+
+    @ModelAttribute(name = "recaptchaKey")
+    private String getRecaptchaHtml() {
+        return recaptchaHtml;
     }
 
     @GetMapping("/registration")
@@ -57,7 +57,7 @@ public class RegistrationController {
 
         if (response != null && !response.isSuccess()) {
             //TODO: to need to implement by BindingResult
-            model.addAttribute( "captchaError", "fill captcha");
+            model.addAttribute("captchaError", "fill captcha");
         }
 
         if (user.getPassword() != null && !user.getConfirmPassword().equals(user.getPassword())) {

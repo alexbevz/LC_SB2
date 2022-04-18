@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 @Entity
 public class Message {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotBlank(message = "please fill the message")
@@ -43,13 +43,12 @@ public class Message {
         this.author = author;
     }
 
+    public String getText() {
+        return text;
+    }
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public Long getId() {

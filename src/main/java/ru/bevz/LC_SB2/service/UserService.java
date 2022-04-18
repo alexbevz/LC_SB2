@@ -1,5 +1,6 @@
 package ru.bevz.LC_SB2.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +20,9 @@ public class UserService implements UserDetailsService {
     private final UserRepo userRepo;
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${hostname}")
+    private String hostname;
 
     public UserService(UserRepo userRepo, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
@@ -54,7 +58,7 @@ public class UserService implements UserDetailsService {
     private void sendMessage(User user) {
         if (!user.getEmail().isBlank() && !user.getEmail().isEmpty()) {
             String message = "Hello, " + user.getUsername() + "! Your code activation: " + user.getActivationCode()
-                    + "\n Or you may visit the next link: http://localhost:8080/activate/" + user.getActivationCode()
+                    + "\n Or you may visit the next link: http://%s/activate/".formatted(hostname) + user.getActivationCode()
                     + "\n Thanks for attention!";
             Thread thread = new Thread(() -> emailSenderService.send(user.getEmail(), "Activation code", message));
             thread.start();

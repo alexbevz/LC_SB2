@@ -53,7 +53,7 @@
                 </#if>
             </div>
         </#if>
-<#--        <div class="g-recaptcha" data-sitekey="${recaptchaKey}"></div>-->
+        <#--        <div class="g-recaptcha" data-sitekey="${recaptchaKey}"></div>-->
         <div class="g-recaptcha" data-sitekey="6LcdKH8fAAAAAA6cYNNJHDOtEKsPTJSV6fConIPb"></div>
         <#if captchaError??>
             <div class="alert alert-danger" role="alert">
