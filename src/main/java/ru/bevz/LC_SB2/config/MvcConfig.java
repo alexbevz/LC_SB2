@@ -14,7 +14,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @Value("${spring.profiles.active}")
+    @Value(value = "${spring.profiles.active:}")
     String profile;
 
     @Bean
