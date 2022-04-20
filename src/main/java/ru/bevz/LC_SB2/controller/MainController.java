@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,8 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.AccessException;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Controller
@@ -69,28 +73,71 @@ public class MainController {
             model.mergeAttributes(ControllerUtils.getErrors(bindingResult));
             model.addAttribute("message", message);
         } else {
-            if (!file.isEmpty()) {
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) {
-                    if (!uploadDir.mkdir()) {
-                        throw new AccessException("You are innocent! Some problem on the server!");
-                    }
-                }
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFileName = uuidFile + "." + file.getOriginalFilename();
-
-                file.transferTo(new File(uploadPath + "/" + resultFileName));
-
-                message.setFilename(resultFileName);
-            }
-
-            messageRepo.save(message);
+            saveFile(message, file);
             model.addAttribute("message", null);
         }
 
-        model.addAttribute("messages", messageRepo.findAll());
+        List<Message> messageRepoAll = (List<Message>) messageRepo.findAll();
+        model.addAttribute("messages", messageRepoAll);
 
         return "main";
     }
 
+    private void saveFile(Message message, MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                if (!uploadDir.mkdir()) {
+                    throw new AccessException("You are innocent! Some problem on the server!");
+                }
+            }
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFileName = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFileName));
+
+            message.setFilename(resultFileName);
+        }
+
+        messageRepo.save(message);
+    }
+
+    @GetMapping("/user-messages/{user}")
+    public String userMessages(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable User user,
+            Model model,
+            @RequestParam(required = false) Message message
+    ) {
+        Set<Message> messages = user.getMessages();
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("message", message);
+        model.addAttribute("isCurrentUser", user.equals(currentUser));
+
+        return "userMessages";
+    }
+
+    @PostMapping("/user-messages/{user}")
+    public String updateMessage(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable(name = "user") Long userId,
+            @RequestParam("id") Message message,
+            @RequestParam("text") String text,
+            @RequestParam("tag") String tag,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+
+        if (message.getAuthor().equals(currentUser)) {
+            if (!text.isEmpty()) {
+                message.setText(text);
+            }
+            if (!tag.isEmpty()) {
+                message.setTag(tag);
+            }
+            saveFile(message, file);
+        }
+
+        return "redirect:/user-messages/" + userId;
+    }
 }

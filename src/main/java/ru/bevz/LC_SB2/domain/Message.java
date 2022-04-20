@@ -35,6 +35,9 @@ public class Message {
         return author != null ? author.getUsername() : "<none>";
     }
 
+    //TODO: to will be able to some bugs
+    public long getAuthorId() { return author != null ? author.getId() : -1;}
+
     public User getAuthor() {
         return author;
     }
