@@ -5,6 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.bevz.LC_SB2.domain.Role;
 import ru.bevz.LC_SB2.domain.User;
 import ru.bevz.LC_SB2.service.UserService;
@@ -70,5 +71,52 @@ public class UserController {
         userService.updateProfile(user, password, email);
 
         return "redirect:/user/profile";
+    }
+
+    @GetMapping("/subscribe/{user}")
+    public String subscribeChannel(
+            @AuthenticationPrincipal User user,
+            @PathVariable("user") User userChannel,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        userService.subscribeUser(userChannel, user);
+        redirectAttributes.addFlashAttribute("messageSubscribe", "You are success subscribed!");
+
+        return "redirect:/user-messages/" + userChannel.getId();
+    }
+
+    @GetMapping("/unsubscribe/{user}")
+    public String unsubscribeChannel(
+            @AuthenticationPrincipal User user,
+            @PathVariable("user") User userChannel,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        userService.unsubscribeUser(userChannel, user);
+        redirectAttributes.addFlashAttribute("messageUnsubscribe", "You are success unsubscribed!");
+
+        return "redirect:/user-messages/" + userChannel.getId();
+    }
+
+    @GetMapping("/{type}/{user}/list")
+    public String userList(
+            Model model,
+            @PathVariable User user,
+            @PathVariable String type
+    ) {
+
+        model.addAttribute("userChannel", user);
+        model.addAttribute("type", (type.substring(0, 1).toUpperCase() + type.substring(1)));
+
+        if (type.equals("subscriptions")) {
+            model.addAttribute("users", user.getSubscriptions());
+        } else if (type.equals("subscribers")) {
+            model.addAttribute("users", user.getSubscribers());
+        } else {
+            return "error";
+        }
+
+        return "subscriptions";
     }
 }

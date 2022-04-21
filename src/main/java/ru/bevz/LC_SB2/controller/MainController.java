@@ -114,6 +114,10 @@ public class MainController {
         model.addAttribute("messages", messages);
         model.addAttribute("message", message);
         model.addAttribute("isCurrentUser", user.equals(currentUser));
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
+        model.addAttribute("userChannel", user);
+        model.addAttribute("countSubscriptions", user.getSubscriptions().size());
+        model.addAttribute("countSubscribers", user.getSubscribers().size());
 
         return "userMessages";
     }

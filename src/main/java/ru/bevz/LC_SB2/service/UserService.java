@@ -133,4 +133,14 @@ public class UserService implements UserDetailsService {
     public User findByUsername(String username) {
         return userRepo.findByUsername(username);
     }
+
+    public void subscribeUser(User channelUser, User subscriber) {
+        channelUser.getSubscribers().add(subscriber);
+        userRepo.save(channelUser);
+    }
+
+    public void unsubscribeUser(User channelUser, User unsubscribed) {
+        channelUser.getSubscribers().remove(unsubscribed);
+        userRepo.save(channelUser);
+    }
 }
