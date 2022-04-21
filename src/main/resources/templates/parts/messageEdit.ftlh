@@ -1,12 +1,12 @@
 <a aria-controls="addMessage"
    aria-expanded="false"
-   class="btn btn-primary"
+   class="btn btn-primary mb-3 sb-3"
    data-bs-toggle="collapse"
    href="#addMessage"
    role="button">
     Message edit
 </a>
-<div id="addMessage" class="collapse ${message???string('show', '')}">
+<div id="addMessage" class="collapse mb-3 sb-3 ${message???string('show', '')}">
     <div class="form-group py-1 col-4">
         <form method="post" enctype="multipart/form-data">
             <div class="form-group py-2">
