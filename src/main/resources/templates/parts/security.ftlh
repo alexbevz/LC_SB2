@@ -16,3 +16,8 @@ known = Session.SPRING_SECURITY_CONTEXT??
     currentUserId = -1
     >
 </#if>
+
+
+<#if captchaHtml??>
+    <#assign captchaKey = captchaHtml>
+</#if>
