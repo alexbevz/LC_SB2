@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,12 +25,16 @@ import java.util.UUID;
 @Controller
 public class MainController {
 
-    private final MessageRepo messageRepo;
     @Value("${upload.path}")
     private String uploadPath;
 
-    public MainController(MessageRepo messageRepo) {
+    private final MessageRepo messageRepo;
+
+    private final ControllerUtils controllerUtils;
+
+    public MainController(MessageRepo messageRepo, ControllerUtils controllerUtils) {
         this.messageRepo = messageRepo;
+        this.controllerUtils = controllerUtils;
     }
 
     @GetMapping("/")
@@ -70,7 +73,7 @@ public class MainController {
         message.setAuthor(user);
 
         if (bindingResult.hasErrors()) {
-            model.mergeAttributes(ControllerUtils.getErrors(bindingResult));
+            model.mergeAttributes(controllerUtils.getErrors(bindingResult));
             model.addAttribute("message", message);
         } else {
             saveFile(message, file);
