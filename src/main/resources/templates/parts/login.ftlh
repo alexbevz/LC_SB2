@@ -1,6 +1,6 @@
 <#macro login path isRegisterForm>
     <form class="col-4" action="${path}" method="post">
-        <div class="mb-3">
+        <div class="mb-3 sb-3">
             <label class="form-label">User name:</label>
             <input class="form-control ${usernameError???string('is-invalid', '')}"
                    name="username"
@@ -52,15 +52,17 @@
                     </div>
                 </#if>
             </div>
-        </#if>
-        <#--        <div class="g-recaptcha" data-sitekey="${recaptchaKey}"></div>-->
-        <div class="g-recaptcha" data-sitekey="6LcdKH8fAAAAAA6cYNNJHDOtEKsPTJSV6fConIPb"></div>
-        <#if captchaError??>
-            <div class="alert alert-danger" role="alert">
-                ${captchaError}
+            <div class="mb-3 sb-3">
+                <#include "security.ftlh">
+                <div class="g-recaptcha" data-sitekey="${captchaKey}"></div>
+                <#if captchaError??>
+                    <div class="alert alert-danger" role="alert">
+                        ${captchaError}
+                    </div>
+                </#if>
             </div>
         </#if>
-        <div>
+        <div class="mb-3 sb-3">
             <#if !isRegisterForm>
                 <div>
                     <button class="btn btn-primary" type="submit">Log In</button>
