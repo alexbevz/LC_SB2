@@ -5,37 +5,42 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import ru.bevz.LC_SB2.domain.User;
-import ru.bevz.LC_SB2.domain.dto.CaptchaResponseDto;
 import ru.bevz.LC_SB2.service.UserService;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Collections;
 
 @Controller
 public class RegistrationController {
 
-    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    @Value("${recaptcha.html}")
+    private String captchaHtml;
 
     private final UserService userService;
 
-    private final RestTemplate restTemplate;
+    private final ControllerUtils controllerUtils;
 
-    @Value("${recaptcha.secret}")
-    private String recaptchaSecret;
-
-    @Value("${recaptcha.html}")
-    private String recaptchaHtml;
-
-    public RegistrationController(UserService userService, RestTemplate restTemplate) {
+    public RegistrationController(UserService userService, ControllerUtils controllerUtils) {
         this.userService = userService;
-        this.restTemplate = restTemplate;
+        this.controllerUtils = controllerUtils;
     }
 
-    @ModelAttribute(name = "recaptchaKey")
-    private String getRecaptchaHtml() {
-        return recaptchaHtml;
+    @ModelAttribute(name = "captchaHtml")
+    private String getCaptchaHtml() {
+        return captchaHtml;
+    }
+
+    @GetMapping("/login")
+    public String getLogin(Model model, HttpSession session) {
+
+        if (session != null && session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") != null) {
+            model.addAttribute("message", "Invalid credentials!");
+            model.addAttribute("messageType", "danger");
+            session.setAttribute("SPRING_SECURITY_LAST_EXCEPTION", null);
+        }
+
+        return "login";
     }
 
     @GetMapping("/registration")
@@ -50,12 +55,9 @@ public class RegistrationController {
             BindingResult result,
             Model model
     ) {
-        String url = String.format(CAPTCHA_URL, recaptchaSecret, captchaResponse);
+        boolean validCaptcha = controllerUtils.checkCaptcha(captchaResponse);
 
-        CaptchaResponseDto response =
-                restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
-
-        if (response != null && !response.isSuccess()) {
+        if (!validCaptcha) {
             //TODO: to need to implement by BindingResult
             model.addAttribute("captchaError", "fill captcha");
         }
@@ -72,8 +74,8 @@ public class RegistrationController {
             result.rejectValue("username", "usernameError", "user exists");
         }
 
-        if (result.hasErrors() || (response != null && !response.isSuccess())) {
-            model.mergeAttributes(ControllerUtils.getErrors(result));
+        if (result.hasErrors() || !validCaptcha) {
+            model.mergeAttributes(controllerUtils.getErrors(result));
             return "registration";
         }
 
@@ -85,14 +87,19 @@ public class RegistrationController {
     @GetMapping("/activate/{code}")
     public String activate(Model model, @PathVariable String code) {
         boolean isActivate = userService.activateUser(code);
+        String message;
+        String messageType;
 
         if (isActivate) {
-            model.addAttribute("message", "User successfully activated!");
-            model.addAttribute("messageType", "success");
+            message = "User successfully activated!";
+            messageType = "success";
         } else {
-            model.addAttribute("message", "Activate code is not found!");
-            model.addAttribute("messageType", "danger");
+            message = "Activate code is not found!";
+            messageType = "danger";
         }
+
+        model.addAttribute("message", message);
+        model.addAttribute("messageType", messageType);
 
         return "login";
     }
