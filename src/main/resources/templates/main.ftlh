@@ -5,7 +5,7 @@
         <h3>Find by a tag</h3>
         <form class="row g-2" method="get" action="/main">
             <div class="col-auto">
-                <input class="form-control" type="text" name="filter" value="${filter!""}" placeholder="Filter">
+                <input class="form-control" type="text" name="filter" value="${filter!""}" placeholder="Filter" />
             </div>
             <div class="col-auto">
                 <button class="btn btn-primary mb-3" type="submit">Search</button>
