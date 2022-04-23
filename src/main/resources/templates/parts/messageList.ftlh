@@ -1,12 +1,12 @@
 <#include "security.ftlh">
-<div class="mb-3 sb-3">
+<div class="mb-3 sb-3" id="messageList">
     <#list messages as message>
-        <div class="card my-3" style="width: 435px;">
+        <div class="card my-3" style="width: 435px;" data-id="${message.id}">
             <#if message.filename??>
                 <img src="/img/${message.filename}" class="card-img-top" alt="Image"/>
             </#if>
             <div class="card-body">
-                <a href="/user-messages/${message.authorId}"><h5 class="card-title">${message.authorName}</h5></a>
+                <a class="card-title" href="/user-messages/${message.authorId}"><h5>${message.authorName}</h5></a>
                 <p class="card-text">${message.text}</p>
             </div>
             <div class="card-footer text-muted">
