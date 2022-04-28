@@ -12,16 +12,29 @@
                     <img src="/img/${message.filename}" class="card-img-top" alt="Image"/>
                 </#if>
                 <div class="card-body">
-                    <a class="card-title" href="/user-messages/${message.authorId}"><h5>${message.authorName}</h5>
+                    <a class="card-title" href="/user-messages/${message.author.id}"><h5>${message.getAuthorName()}</h5>
                     </a>
                     <p class="card-text">${message.text}</p>
                 </div>
-                <div class="card-footer text-muted">
-                    <a href="/main?filter=${message.tag}" class="card-link">#${message.tag}</a>
-                    <#if message.authorId == currentUserId>
-                        <a type="button" class="btn btn-primary"
-                           href="/user-messages/${message.authorId}?message=${message.id}">Edit</a>
-                    </#if>
+                <div class="card-footer text-muted container">
+                    <div class="row">
+
+                        <a class="card-link col align-self-center"
+                           href="/main?filter=${message.tag}">#${message.tag}</a>
+                        <a class="col align-self-center" href="/messages/${message.id}/like">
+                            <#if message.meLiked>
+                                <i class="fas fa-heart"></i>
+                            <#else>
+                                <i class="far fa-heart"></i>
+                            </#if>
+                            ${message.likes}
+                        </a>
+                        <#if message.author.id == currentUserId>
+                            <a class="col btn btn-primary"
+                               href="/user-messages/${message.author.id}?message=${message.id}"
+                               type="button">Edit</a>
+                        </#if>
+                    </div>
                 </div>
             </div>
         </div>
