@@ -1,6 +1,9 @@
 package ru.bevz.LC_SB2.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,28 +16,23 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.bevz.LC_SB2.domain.Message;
 import ru.bevz.LC_SB2.domain.User;
 import ru.bevz.LC_SB2.repos.MessageRepo;
+import ru.bevz.LC_SB2.service.MessageService;
 
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.rmi.AccessException;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 @Controller
 public class MainController {
-
-    @Value("${upload.path}")
-    private String uploadPath;
 
     private final MessageRepo messageRepo;
 
     private final ControllerUtils controllerUtils;
 
-    public MainController(MessageRepo messageRepo, ControllerUtils controllerUtils) {
+    private final MessageService messageService;
+
+    public MainController(MessageRepo messageRepo, ControllerUtils controllerUtils, MessageService messageService) {
         this.messageRepo = messageRepo;
         this.controllerUtils = controllerUtils;
+        this.messageService = messageService;
     }
 
     @GetMapping("/")
@@ -44,18 +42,21 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(
-            @RequestParam(required = false, name = "filter", defaultValue = "") String filter,
-            Model model
+            @RequestParam(required = false, defaultValue = "") String filter,
+            Model model,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Iterable<Message> messages;
+        Page<Message> pageMessages;
 
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepo.findByTag(filter);
+        if (!filter.isBlank()) {
+            pageMessages = messageRepo.findByTag(filter, pageable);
         } else {
-            messages = messageRepo.findAll();
+            pageMessages = messageRepo.findAll(pageable);
+            filter = null;
         }
 
-        model.addAttribute("messages", messages);
+        model.addAttribute("pageMessages", pageMessages);
+        model.addAttribute("url", "/main");
         model.addAttribute("filter", filter);
 
         return "main";
@@ -64,57 +65,41 @@ public class MainController {
     @PostMapping("/main")
     public String add(
             @AuthenticationPrincipal User user,
-            @Valid Message message,
-            BindingResult bindingResult,
+            @Valid Message message, BindingResult bindingResult,
             Model model,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam("file") MultipartFile file
-
-    ) throws IOException {
-        message.setAuthor(user);
-
+    ) {
         if (bindingResult.hasErrors()) {
             model.mergeAttributes(controllerUtils.getErrors(bindingResult));
+            message.setId(0L);
             model.addAttribute("message", message);
         } else {
-            saveFile(message, file);
+            message.setAuthor(user);
+            messageService.saveMessage(message, file);
             model.addAttribute("message", null);
         }
 
-        List<Message> messageRepoAll = (List<Message>) messageRepo.findAll();
-        model.addAttribute("messages", messageRepoAll);
+        Page<Message> pageMessages = messageRepo.findAll(pageable);
+
+        model.addAttribute("url", "/main");
+        model.addAttribute("pageMessages", pageMessages);
 
         return "main";
-    }
-
-    private void saveFile(Message message, MultipartFile file) throws IOException {
-        if (!file.isEmpty()) {
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                if (!uploadDir.mkdir()) {
-                    throw new AccessException("You are innocent! Some problem on the server!");
-                }
-            }
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFileName = uuidFile + "." + file.getOriginalFilename();
-
-            file.transferTo(new File(uploadPath + "/" + resultFileName));
-
-            message.setFilename(resultFileName);
-        }
-
-        messageRepo.save(message);
     }
 
     @GetMapping("/user-messages/{user}")
     public String userMessages(
             @AuthenticationPrincipal User currentUser,
-            @PathVariable User user,
-            Model model,
+            @PathVariable User user, Model model,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false) Message message
     ) {
-        Set<Message> messages = user.getMessages();
+        Page<Message> pageMessages = messageRepo.findByAuthor(user, pageable);
 
-        model.addAttribute("messages", messages);
+        model.addAttribute("pageMessages", pageMessages);
+        model.addAttribute("url", "/user-messages/" + user.getId());
+
         model.addAttribute("message", message);
         model.addAttribute("isCurrentUser", user.equals(currentUser));
         model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
@@ -133,7 +118,7 @@ public class MainController {
             @RequestParam("text") String text,
             @RequestParam("tag") String tag,
             @RequestParam("file") MultipartFile file
-    ) throws IOException {
+    ) {
 
         if (message.getAuthor().equals(currentUser)) {
             if (!text.isEmpty()) {
@@ -142,7 +127,7 @@ public class MainController {
             if (!tag.isEmpty()) {
                 message.setTag(tag);
             }
-            saveFile(message, file);
+            messageService.saveMessage(message, file);
         }
 
         return "redirect:/user-messages/" + userId;
