@@ -14,9 +14,9 @@
     <#else>
         <#assign body = 1..page.getTotalPages()>
     </#if>
-    <div class="mt-3">
-        <nav aria-label="...">
-            <ul class="pagination">
+    <div class="container mt-3">
+        <div class="row">
+            <ul class="pagination col justify-content-center">
                 <li class="page-item">
                     <a class="page-link" href="#">Previous</a>
                 </li>
@@ -39,9 +39,7 @@
                     <a class="page-link" href="#">Next</a>
                 </li>
             </ul>
-        </nav>
-        <nav aria-label="...">
-            <ul class="pagination">
+            <ul class="pagination col justify-content-center">
                 <#list [5, 10, 25, 50] as c>
                     <#if c == page.getSize()>
                         <li class="page-item active">
@@ -54,6 +52,6 @@
                     </#if>
                 </#list>
             </ul>
-        </nav>
+        </div>
     </div>
 </#macro>
