@@ -41,9 +41,9 @@ public class UserService implements UserDetailsService {
         return byUsername;
     }
 
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         if (userRepo.findByUsername(user.getUsername()) != null) {
-            throw new EntityExistsException("user already exists");
+            return false;
         }
 
         user.setActive(false);
@@ -53,6 +53,7 @@ public class UserService implements UserDetailsService {
         userRepo.save(user);
 
         sendMessage(user);
+        return true;
     }
 
     private void sendMessage(User user) {
