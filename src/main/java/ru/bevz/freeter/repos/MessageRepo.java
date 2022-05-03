@@ -14,7 +14,7 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 
     @Query(
             """
-            select new ru.bevz.LC_SB2.domain.dto.MessageDto(
+            select new ru.bevz.freeter.domain.dto.MessageDto(
             m,
             count(ml),
             sum(case when ml = :user then 1 else 0 end) > 0
@@ -27,7 +27,7 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 
     @Query(
             """
-            select new ru.bevz.LC_SB2.domain.dto.MessageDto(
+            select new ru.bevz.freeter.domain.dto.MessageDto(
             m,
             count(ml),
             sum(case when ml = :user then 1 else 0 end) > 0
@@ -41,7 +41,7 @@ public interface MessageRepo extends CrudRepository<Message, Long> {
 
     @Query(
             """
-            select new ru.bevz.LC_SB2.domain.dto.MessageDto(
+            select new ru.bevz.freeter.domain.dto.MessageDto(
             m,
             count(ml),
             sum(case when ml = :user then 1 else 0 end) > 0

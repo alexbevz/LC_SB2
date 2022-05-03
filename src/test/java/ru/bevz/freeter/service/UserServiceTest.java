@@ -1,4 +1,4 @@
-package ru.bevz.LC_SB2.service;
+package ru.bevz.freeter.service;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -14,8 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.bevz.freeter.domain.Role;
 import ru.bevz.freeter.domain.User;
 import ru.bevz.freeter.repos.UserRepo;
-import ru.bevz.freeter.service.EmailSenderService;
-import ru.bevz.freeter.service.UserService;
 
 import java.util.Collections;
 

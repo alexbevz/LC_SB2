@@ -1,4 +1,4 @@
-package ru.bevz.LC_SB2;
+package ru.bevz.freeter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
