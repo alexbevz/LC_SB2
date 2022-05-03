@@ -3,20 +3,19 @@ package ru.bevz.LC_SB2.service;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.MailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.bevz.LC_SB2.domain.Role;
-import ru.bevz.LC_SB2.domain.User;
-import ru.bevz.LC_SB2.repos.UserRepo;
+import ru.bevz.freeter.domain.Role;
+import ru.bevz.freeter.domain.User;
+import ru.bevz.freeter.repos.UserRepo;
+import ru.bevz.freeter.service.EmailSenderService;
+import ru.bevz.freeter.service.UserService;
 
 import java.util.Collections;
 

@@ -3,6 +3,7 @@ package ru.bevz.LC_SB2;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import ru.bevz.freeter.DumbPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
