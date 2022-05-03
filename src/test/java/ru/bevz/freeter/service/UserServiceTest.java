@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.bevz.freeter.domain.Role;
 import ru.bevz.freeter.domain.User;
@@ -18,6 +19,7 @@ import ru.bevz.freeter.repos.UserRepo;
 import java.util.Collections;
 
 @RunWith(SpringRunner.class)
+@ActiveProfiles("dev")
 @SpringBootTest
 class UserServiceTest {
 

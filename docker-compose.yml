@@ -3,7 +3,7 @@ version: '3'
 services:
   postgres:
     image: 'postgres:14'
-    container_name: 'freeter-pg'
+    container_name: 'freeter-db'
     environment:
       - 'POSTGRES_USER=postgres'
       - 'POSTGRES_PASSWORD=postgres'
