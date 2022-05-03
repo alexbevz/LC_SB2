@@ -10,6 +10,8 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ru.bevz.freeter.exception.util.RedirectInterceptor;
 
+import java.io.File;
+
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
@@ -31,7 +33,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:/" + (profile.equals("dev") ? "" : "/") + uploadPath + "/");
+                .addResourceLocations("file:///" + uploadPath + "/");
+        new File(uploadPath).mkdirs();
+
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
     }
