@@ -2,12 +2,10 @@ package ru.bevz.freeter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@PropertySource(value = "classpath:/hiding.properties")
-public class Application {
+public class FreeterApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(FreeterApplication.class, args);
     }
 }
