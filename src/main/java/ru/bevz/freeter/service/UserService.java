@@ -20,7 +20,7 @@ public class UserService implements UserDetailsService {
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${hostname}")
+    @Value("${hostname.domain}")
     private String hostname;
 
     public UserService(UserRepo userRepo, EmailSenderService emailSenderService, PasswordEncoder passwordEncoder) {
